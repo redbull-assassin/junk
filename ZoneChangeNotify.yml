@@ -28,15 +28,22 @@ blueprint:
       selector:
         device:
           integration: mobile_app
+    notify_channel:
+      name: Message Notification Channel
+      description: 
+      selector:
+        text:
+        default: Alert
+
 trigger:
   - platform: state
     entity_id: !input person_entity
     from: !input zone_entity
-    id: from_home
+    id: from_zone
   - platform: state
     entity_id: !input person_entity
     to: !input zone_entity
-    id: to_home
+    id: to_zone
 
 variables:
   zone_entity: !input zone_entity
@@ -44,7 +51,14 @@ variables:
   zone_state: "{{ states[zone_entity].name }}"
   person_entity: !input person_entity
   person_name: "{{ states[person_entity].name }}"
-
+  person_direction: >-
+    {% if trigger.entity_id == from_zone %}
+      "left"
+    {%- elif trigger.entity_id == to_zone -%}
+      "arrived at"
+    {%- else -%}
+      "triggered"
+    {%- endif -%}
 condition:
   condition: template
   value_template: "{{ trigger.from_state.state == zone_state or trigger.to_state.state == zone_state }}"
@@ -55,9 +69,7 @@ action:
     type: notify
     device_id: !input notify_device
     title: "Zone Change"
-    message: "{{ person_name }} has left {{ zone_state }}"
+    message: "{{ person_name }} has {{ person_direction }} {{ zone_state }}"
     data:
       channel: Alert
-
-
-#  source_url: https://github.com/home-assistant/core/blob/dev/homeassistant/components/automation/blueprints/notify_leaving_zone.yaml
+      
