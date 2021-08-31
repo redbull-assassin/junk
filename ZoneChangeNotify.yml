@@ -8,7 +8,7 @@
 #
 
 blueprint:
-  name: Zone Notification
+  name: Zone Change Notification
   description: Send a notification to a device when a person enters or leaves a specific zone.
   domain: automation
   input:
