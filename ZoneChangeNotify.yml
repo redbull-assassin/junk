@@ -52,11 +52,11 @@ variables:
   person_name: "{{ states[person_entity].name }}"
   person_direction: >-
     {% if trigger.entity_id == from_zone %}
-      "left"
+      left
     {%- elif trigger.entity_id == to_zone -%}
-      "arrived at"
+      arrived at
     {%- else -%}
-      "triggered"
+      triggered
     {%- endif -%}
 condition:
   condition: template
