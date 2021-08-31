@@ -30,7 +30,7 @@ blueprint:
           integration: mobile_app
     notify_channel:
       name: Message Notification Channel
-      description: 
+      description: For adjusting or customizing notifications on the mobile device  
       selector:
         text:
 
