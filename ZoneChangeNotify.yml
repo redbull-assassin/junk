@@ -33,7 +33,7 @@ blueprint:
       description: 
       selector:
         text:
-        default: Alert
+          default: Alert
 
 trigger:
   - platform: state
