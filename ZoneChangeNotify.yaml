@@ -1,0 +1,87 @@
+#
+# Home Assistant Automation Blueprint
+#
+# Zone change notification
+#
+# Revision 0.2
+# Modified by Redbull Asassin, Aug 31, 2021
+#
+
+blueprint:
+  name: Zone Change Notification
+  description: Send a notification to a device when a person enters or leaves a specific zone.
+  domain: automation
+  input:
+    person_entity:
+      name: Person
+      selector:
+        entity:
+          domain: person
+    zone_entity:
+      name: Zone
+      selector:
+        entity:
+          domain: zone
+    notify_device:
+      name: Device to notify
+      description: Device needs to run the official Home Assistant app to receive notifications.
+      selector:
+        device:
+          integration: mobile_app
+    custom_title:
+      name: Message Title
+      description: Title that will appear on the device
+      selector:
+        text:
+      default: Zone Change
+    custom_subject:
+      name: Message Subject
+      description: This will appear on the second line of the message  
+      selector:
+        text:
+    custom_channel:
+      name: Message Notification Channel
+      description: For adjusting or customizing notifications on the mobile device  
+      selector:
+        text:
+      default: Alert
+
+trigger:
+  - platform: state
+    entity_id: !input person_entity
+    from: !input zone_entity
+    id: from_zone
+  - platform: state
+    entity_id: !input person_entity
+    to: !input zone_entity
+    id: to_zone
+
+variables:
+  zone_entity: !input zone_entity
+  # This is the state of the person when it's in this zone.
+  zone_state: "{{ states[zone_entity].name }}"
+  person_entity: !input person_entity
+  person_name: "{{ states[person_entity].name }}"
+  person_direction: >-
+    {% if trigger.entity_id == from_zone %}
+      left
+    {%- elif trigger.entity_id == to_zone -%}
+      arrived at
+    {%- else -%}
+      triggered
+    {%- endif -%}
+    
+condition:
+  condition: template
+  value_template: "{{ trigger.from_state.state == zone_state or trigger.to_state.state == zone_state }}"
+
+action:
+  - alias: "Notify that a person has changed zones"
+    domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    title: !input custom_title
+    message: "{{ person_name }} has {{ person_direction }} {{ zone_state }}"
+    data:
+      channel: !input custom_channel
+      subject: !input custom_subject
