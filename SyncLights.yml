@@ -3,13 +3,13 @@
 #
 # Synchronize on/off and color attribute states on multiple 3 lights
 #
-# Revision 0.1
+# Revision 0.1.1
 # Modified by Redbull Asassin, Aug 19, 2021
 #
 
 blueprint:
-  name: Triple Light Bonding with Brightness & Color Sync
-  description: Bind 3 light entities together Synchronize state and attributes
+  name: Light Bonding - Triple
+  description: Bind 3 light entities together with brightness synch 
   domain: automation
   input:
     light_1:
@@ -51,13 +51,7 @@ action:
   state: 'on'
 - service: light.turn_on
   data:
-    supported_color_modes: '{{ trigger.to_state.attributes.supported_color_modes }}'
     brightness: '{{ trigger.to_state.attributes.brightness }}'
-    color_mode: '{{ trigger.to_state.attributes.color_mode }}'
-    hs_color: '{{ trigger.to_state.attributes.hs_color }}'
-    rgb_color: '{{ trigger.to_state.attributes.rgb_color }}'
-    xy_color: '{{ trigger.to_state.attributes.xy_color }}'
-    color_temp: '{{ trigger.to_state.attributes.color_temp }}'
   entity_id:
     - !input light_1
     - !input light_2
