@@ -1,2 +1,2 @@
-# py_modules
-Custom Python Modules
+# HASS Blueprints and stuff
+Custom HASS Things
